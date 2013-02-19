@@ -1,0 +1,38 @@
+{
+    "name"    : "transcend",
+
+    "description" : "Transcend is an extensible JavaScript preprocessor that optimizes files for websites.",
+
+    "author"  : {
+        "name"  : "Alex Brombal",
+        "email" : "alex@brombal.com",
+        "url"   : "https://github.com/alexbrombal/transcend"
+    },
+
+    "version" : "0.1",
+
+    "main"    : "./transcend.js",
+
+    "bin"     : {
+        "transcendjs" : "./transcend.js"
+    },
+
+    "dependencies": {
+        "optimist": "0.3.5",
+        "uglify-js": "2.2.5",
+        "underscore": "1.4.4"
+    },
+
+    "bugs": {
+        "url" : "http://github.com/alexbrombal/transcend/issues",
+        "email" : "alex@brombal.com"
+    },
+
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:alexbrombal/transcend.git"
+    },
+
+    "preferGlobal": true
+
+}
