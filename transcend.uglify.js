@@ -26,7 +26,13 @@ Transcend.setHandler('uglify', {
          */
         if(file.hidden()) return;
 
-        var result = uglify.minify(file.absOutputPath);
+        var result;
+        try {
+            result = uglify.minify(file.absOutputPath);
+
+        } catch(e) {
+            // Uglify errors are output to the console
+        }
         fs.writeFile(file.absOutputPath, result.code, 'utf8');
     }
 

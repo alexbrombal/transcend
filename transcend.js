@@ -30,7 +30,7 @@ try {
         output: argv._[1]
     });
 
-    var process = function() {
+    var processProject = function() {
         t.process(function(e) {
             if(e)
                 console.log(e);
@@ -39,7 +39,7 @@ try {
             t.reset();
         });
     };
-    var processDelay = _.debounce(process, 500, false);
+    var processDelay = _.debounce(processProject, 500, false);
 
     if(argv.watch)
     {
@@ -58,9 +58,9 @@ try {
 
         watchDir(t.absDir);
     }
-    process();
+    processProject();
 
 } catch(e) {
-    console.log(e);
+    throw e;
     process.exit(1);
 }

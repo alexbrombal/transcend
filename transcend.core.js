@@ -8,7 +8,7 @@
     var _ = require('underscore');
 
     function Transcend(options) {
-        this.dir = options.dir || './';
+        this.dir = options.dir || '.'+path.sep;
         this.cwd = process.cwd() + path.sep;
         this.absDir = path.normalize(this.cwd + this.dir + path.sep);
         this.output = options.output || 'build';
@@ -44,14 +44,16 @@
 
             // Verify the output dir exists and is writable
             try {
-                fs.statSync(this.absOutput);
-                fs.openSync(this.absOutput + '.test', 'w');
-                fs.unlink(this.absOutput + '.test');
+                fs.existsSync(this.absOutput);
+                var fd = fs.openSync(this.absOutput + '.transcend', 'w');
+                fs.closeSync(fd);
+                fs.unlink(this.absOutput + '.transcend');
             } catch (e) {
                 try {
                     fs.mkdirSync(this.absOutput);
                 } catch (e) {
-                    return complete.call(this, new Error('Output directory could not be created'));
+                    if(e.code !== 'EEXIST')
+                        return complete.call(this, new Error('Output directory could not be created'));
                 }
             }
 
@@ -74,7 +76,10 @@
 
         reset: function() {
             for(var i in this.files)
+            {
+                this.files[i]._reset();
                 delete this.files[i];
+            }
             this.files._count = 0;
             this.files._completed = 0;
             for(var directive in Transcend._handlers)
@@ -96,7 +101,7 @@
             fs.readdirSync(dir).forEach(function(item, i, files)
             {
                 var absItem = path.normalize(dir + path.sep + item);
-                item = absItem.replace(_this.absDir, '/');
+                item = absItem.replace(_this.absDir, path.sep);
 
                 try {
                     if(fs.statSync(absItem).isFile())
@@ -264,14 +269,23 @@
          */
         _resolvePath: function(cwd, p)
         {
-            if(p[0] === '/') cwd = '';
-            cwd += '/';
+        	cwd = path.normalize(cwd);
+        	p = path.normalize(p);
+        	
+            if(p[0] === path.sep) cwd = '';
+            cwd += path.sep;
 
-            var test = path.normalize(cwd + path.dirname(p) + path.sep + path.basename(p).replace(/^_/, '').replace(/\.js$/, '') + '.js');
-            if(test in this.files) return test;
+            try {
+                var test = path.normalize(this.absDir + cwd + path.dirname(p) + path.sep + path.basename(p).replace(/^_/, '').replace(/\.js$/, '') + '.js');
+                if(test.replace(this.absDir, path.sep) in this.files) return test.replace(this.absDir, path.sep);
+                else if(fs.existsSync(test)) return test;
+            } catch(e) { }
 
-            test = path.normalize(cwd + path.dirname(p) + path.sep + '_' + path.basename(p).replace(/^_/, '').replace(/\.js$/, '') + '.js');
-            if(test in this.files) return test;
+            try {
+                test = path.normalize(this.absDir + cwd + path.dirname(p) + path.sep + '_' + path.basename(p).replace(/^_/, '').replace(/\.js$/, '') + '.js');
+                if(test.replace(this.absDir, path.sep) in this.files) return test.replace(this.absDir, path.sep);
+                else if(fs.existsSync(test)) return test;
+            } catch(e) { }
         }
 
     });
@@ -381,6 +395,11 @@
             this._directives[directive.name] = this._directives[directive.name] || [];
             this._directives[directive.name].push(directive);
             this._directives._lines[directive.lineNum] = directive;
+        },
+
+        _reset: function() {
+            if(this._fd)
+                try { fs.closeSync(this._fd); } catch(e) { }
         }
     });
 

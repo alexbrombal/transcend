@@ -26,7 +26,7 @@ var includeDependencies = function(file) {
         var prefix = new Buffer('/***** Required '+deps[d]+' *****/\n', 'utf8');
         fs.writeSync(file.fd, prefix, 0, prefix.length, null);
 
-        var buffer = fs.readFileSync(path.normalize(this.absDir + deps[d]));
+        var buffer = fs.readFileSync(typeof deps[d]  === 'string' ? deps[d] : deps[d].absPath);
         fs.writeSync(file.fd, buffer, 0, buffer.length, null);
 
         var postfix = new Buffer('\n/***** Ending '+deps[d]+' *****/\n\n', 'utf8');
@@ -67,7 +67,7 @@ Transcend.setHandler('master', {
         var deps = [],
             sources = file.directiveArgs('master').map(function(item) {
                 var p = this.files[this._resolvePath(path.dirname(file.path), item)];
-                if(!p) throw new Error('@import argument '+item+' could not be resolved.');
+                if(!p) throw new Error('@master argument '+item+' could not be resolved.');
                 return p;
             }.bind(this));
 
@@ -106,14 +106,22 @@ Transcend.setHandler('master', {
  * @return {Array}
  */
 Transcend.prototype.getDependencies = function(file, _processed) {
+	// file may be null if a file outside the project directory is referenced.
+	if(!file) return [];
+	if(file.data.dependencies) return file.data.dependencies;
     var deps = file.data.dependencies || [];
-    if(deps.length) return deps;
-    var args = file.directiveArgs('require').map(function(item) { return this._resolvePath(path.dirname(file.path), item); }.bind(this));
+
+    var args = file.directiveArgs('require').map(function(item) {
+        var p = this._resolvePath(path.dirname(file.path), item);
+        if(!p) throw new Error('@require argument '+item+' could not be resolved.');
+        return this.files[p] ? this.files[p] : p;
+    }.bind(this));
     _processed = _processed || {};
     _processed[file.path] = true;
     for(var i in args)
     {
-        if(!_processed[args[i]]) deps.push.apply(deps, this.getDependencies(this.files[args[i]], _processed));
+        if(typeof args[i] !== 'string' && !_processed[args[i].path])
+            deps.push.apply(deps, this.getDependencies(args[i], _processed));
         deps.push(args[i]);
     }
     deps = _.unique(deps);

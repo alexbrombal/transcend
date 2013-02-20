@@ -66,7 +66,10 @@ var fs = require('fs');
             }
 
             if (bytesRead < this.bufferLength)
+            {
+                try { fs.close(this.file); } catch(e) { }
                 this.lines.push(null);
+            }
 
             this.readLines(num, callback, complete);
         }.bind(this));
