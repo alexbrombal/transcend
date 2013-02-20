@@ -26,8 +26,8 @@ Transcend.setHandler('uglify', {
          */
         if(file.hidden()) return;
 
-        //var result = uglify.minify(file.absOutputPath);
-        //fs.writeFile(file.absOutputPath, result.code, 'utf8');
+        var result = uglify.minify(file.absOutputPath);
+        fs.writeFile(file.absOutputPath, result.code, 'utf8');
     }
 
 });

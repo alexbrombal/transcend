@@ -1,6 +1,1 @@
-
-//@require /tools/jquery
-//@uglify
-
-alert('page1');
-
+alert("page1");
