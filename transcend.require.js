@@ -3,6 +3,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var os = require('os');
 require('./util.js');
 var _ = require('underscore');
 
@@ -23,13 +24,13 @@ var includeDependencies = function(file) {
     var deps = file.data.dependencies;
     for(var d in deps)
     {
-        var prefix = new Buffer('/***** Required '+deps[d]+' *****/\n', 'utf8');
+        var prefix = new Buffer('/***** Required '+deps[d]+' *****/'+os.EOL, 'utf8');
         fs.writeSync(file.fd, prefix, 0, prefix.length, null);
 
         var buffer = fs.readFileSync(typeof deps[d]  === 'string' ? deps[d] : deps[d].absPath);
         fs.writeSync(file.fd, buffer, 0, buffer.length, null);
 
-        var postfix = new Buffer('\n/***** Ending '+deps[d]+' *****/\n\n', 'utf8');
+        var postfix = new Buffer('\n/***** Ending '+deps[d]+' *****/'+os.EOL+os.EOL, 'utf8');
         fs.writeSync(file.fd, postfix, 0, postfix.length, null);
     }
 };
