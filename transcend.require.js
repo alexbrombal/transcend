@@ -24,13 +24,16 @@ var includeDependencies = function(file) {
     var deps = file.data.dependencies;
     for(var d in deps)
     {
-        var prefix = new Buffer('/***** Required '+deps[d]+' *****/'+os.EOL, 'utf8');
+        var relPath = (typeof deps[d]  === 'string' ? deps[d] : deps[d].path);
+        var absPath = (typeof deps[d]  === 'string' ? deps[d] : deps[d].absPath);
+
+        var prefix = new Buffer('/***** Required '+relPath+' *****/'+os.EOL, 'utf8');
         fs.writeSync(file.fd, prefix, 0, prefix.length, null);
 
-        var buffer = fs.readFileSync(typeof deps[d]  === 'string' ? deps[d] : deps[d].absPath);
+        var buffer = fs.readFileSync(absPath);
         fs.writeSync(file.fd, buffer, 0, buffer.length, null);
 
-        var postfix = new Buffer('\n/***** Ending '+deps[d]+' *****/'+os.EOL+os.EOL, 'utf8');
+        var postfix = new Buffer(os.EOL+'/***** Ending '+relPath+' *****/'+os.EOL+os.EOL, 'utf8');
         fs.writeSync(file.fd, postfix, 0, postfix.length, null);
     }
 };

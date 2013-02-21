@@ -1,5 +1,4 @@
 
-//@uglify
 //@require sub/sub1, sub/sub2
 
 var page2 = {
