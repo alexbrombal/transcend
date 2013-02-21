@@ -234,7 +234,7 @@
                     for(var directive in Transcend._handlers)
                         r = (_this._runHandler(file, directive, 'eachLine', [text, lineNum]) !== false) && r;
 
-                    if(r !== false)
+                    if(r !== false && text.indexOf('//@') !== 0)
                         fs.writeSync(file.fd, new Buffer(text+"\n"), 0, text.length + 1, null);
                 },
 
