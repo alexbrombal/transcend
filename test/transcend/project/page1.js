@@ -1,6 +1,6 @@
+"use strict";
 
-//@uglify
-//@require sub/sub1
+//@require /tools/tool1, /tools/tool2, /tools/tool4
 
 var page1 = {
 
@@ -10,4 +10,4 @@ var page1 = {
 		// call ajax...
 	}
 
-}
+};

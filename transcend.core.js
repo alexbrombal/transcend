@@ -269,14 +269,15 @@
          */
         _resolvePath: function(cwd, p)
         {
-        	cwd = path.normalize(cwd);
-        	p = path.normalize(p);
-        	
+            cwd = path.normalize(cwd);
+            p = path.normalize(p);
+
             if(p[0] === path.sep) cwd = '';
             cwd += path.sep;
 
+            var test;
             try {
-                var test = path.normalize(this.absDir + cwd + path.dirname(p) + path.sep + path.basename(p).replace(/^_/, '').replace(/\.js$/, '') + '.js');
+                test = path.normalize(this.absDir + cwd + path.dirname(p) + path.sep + path.basename(p).replace(/^_/, '').replace(/\.js$/, '') + '.js');
                 if(test.replace(this.absDir, path.sep) in this.files) return test.replace(this.absDir, path.sep);
                 else if(fs.existsSync(test)) return test;
             } catch(e) { }

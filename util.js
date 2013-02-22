@@ -7,6 +7,15 @@ Object.defineProperty(Array.prototype, 'remove', {
     }
 });
 
+Object.defineProperty(Array.prototype, 'unique', {
+    value: function() {
+        for(var i = this.length-1; i >= 0; i--)
+            if(this.indexOf(this[i]) !== i)
+                this.remove(i);
+        return this;
+    }
+});
+
 Object.defineProperty(Function.prototype, 'curry', {
     value: function() {
         if (arguments.length < 1)

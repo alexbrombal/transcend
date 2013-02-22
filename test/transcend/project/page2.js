@@ -1,5 +1,7 @@
+"use strict";
 
-//@require sub/sub1, sub/sub2
+//@require /tools/tool1
+//@master sub/sub1, sub/sub2
 
 var page2 = {
 
@@ -8,4 +10,4 @@ var page2 = {
 		alert(longVariableName);
 	}
 
-}
+};

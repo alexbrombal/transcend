@@ -17,11 +17,10 @@ var Transcend = require('./transcend.core.js');
 var includeDependencies = function(file) {
     // Keep track of which files I've been run on. I can only run once per file
     // (even though I get called for both @require and @master directives).
-    includeDependencies.files = includeDependencies.files || {};
     if(includeDependencies.files[file.path]) return;
     includeDependencies.files[file.path] = true;
 
-    var deps = file.data.dependencies;
+    var deps = file.data.requires;
     for(var d in deps)
     {
         var relPath = (typeof deps[d]  === 'string' ? deps[d] : deps[d].path);
@@ -37,6 +36,44 @@ var includeDependencies = function(file) {
         fs.writeSync(file.fd, postfix, 0, postfix.length, null);
     }
 };
+includeDependencies.files = {};
+
+
+
+
+
+
+/**
+ * @param {Transcend.File} file
+ * @return {Array}
+ */
+Transcend.prototype.getRequires = function(file) {
+    // file may be null if a file outside the project directory is referenced.
+    if(!file) return [];
+
+    if(file.data.requires) return file.data.requires;
+    var reqs = file.data.requires = [];
+
+    var args = file.directiveArgs('require').map(function(item) {
+        var p = this._resolvePath(path.dirname(file.path), item);
+        if(!p) throw new Error('@require argument "'+item+'" could not be resolved in '+file.path+'.');
+        return this.files[p] ? this.files[p] : p;
+    }.bind(this));
+
+    for(var i in args)
+    {
+        if(typeof args[i] !== 'string')
+            reqs.push.apply(reqs, this.getRequires(args[i]));
+        reqs.push(args[i]);
+    }
+    reqs.unique();
+    reqs.remove(reqs.indexOf(file));
+    return reqs;
+};
+
+
+
+
 
 
 // Create 'require' and 'master' directives.
@@ -47,7 +84,7 @@ Transcend.setHandler('require', {
      * @param {Transcend.File} file
      */
     prepare: function(file) {
-        file.data.dependencies = this.getDependencies(file);
+        this.getRequires(file);
     },
 
     process: includeDependencies,
@@ -60,6 +97,48 @@ Transcend.setHandler('require', {
 
 });
 
+
+
+
+
+/**
+ * Master dependencies are all the "required" files, plus the master dependencies (recursive) of the "master" sources.
+ * This method populates file.data.requires with all the master dependencies.
+ * @param {Transcend.File} file
+ */
+Transcend.prototype.getMasterDependencies = function(file) {
+    var masters = file.directiveArgs('master');
+    if(!masters.length) return;
+    if(file.data.masters) return;
+
+    var deps = [], //file.data.requires ? [file.data.requires.slice()] : [], // duplicate
+        sources = masters.map(function(item) {
+            var p = this.files[this._resolvePath(path.dirname(file.path), item)];
+            if(!p) throw new Error('@master argument "'+item+'" could not be resolved in '+file.path+'.');
+            return p;
+        }.bind(this));
+
+    file.data.masters = sources;
+
+    // deps is an array of arrays, with each child array being the master dependencies of each source
+    for(var i in sources)
+    {
+        this.getMasterDependencies(sources[i]);
+        if(sources[i].data.requires)
+            deps.push(sources[i].data.requires);
+    }
+
+    // master dependencies is all of the "requires" plus the intersection of all the master source dependencies
+    file.data.requires = file.data.requires || [];
+    file.data.requires.push.apply(file.data.requires, _.intersection.apply(_, deps));
+    file.data.requires.unique();
+
+    for(var j in sources)
+        sources[j].data.requires = _.difference(sources[j].data.requires, file.data.requires);
+};
+
+
+
 Transcend.setHandler('master', {
 
     /**
@@ -67,26 +146,7 @@ Transcend.setHandler('master', {
      */
     prepare: function(file) {
         this.ensurePrepared('require');
-
-        var deps = [],
-            sources = file.directiveArgs('master').map(function(item) {
-                var p = this.files[this._resolvePath(path.dirname(file.path), item)];
-                if(!p) throw new Error('@master argument '+item+' could not be resolved.');
-                return p;
-            }.bind(this));
-
-        // deps is an array of arrays, with each child array being the dependencies of the master sources
-        for(var i in sources)
-            deps.push(sources[i].data.dependencies);
-
-        // master dependencies is the intersection of all the source dependencies
-        file.data.master = _.intersection.apply(_, deps);
-        file.data.dependencies = file.data.dependencies || [];
-        file.data.dependencies.push.apply(file.data.dependencies, file.data.master);
-        file.data.dependencies = _.unique(file.data.dependencies);
-
-        for(var i in sources)
-            sources[i].data.dependencies = _.difference(sources[i].data.dependencies, file.data.dependencies);
+        this.getMasterDependencies(file);
     },
 
     process: includeDependencies,
@@ -103,32 +163,3 @@ Transcend.setHandler('master', {
 
 });
 
-
-/**
- * @param {Transcend.File} file
- * @param {Object} _processed
- * @return {Array}
- */
-Transcend.prototype.getDependencies = function(file, _processed) {
-	// file may be null if a file outside the project directory is referenced.
-	if(!file) return [];
-	if(file.data.dependencies) return file.data.dependencies;
-    var deps = file.data.dependencies || [];
-
-    var args = file.directiveArgs('require').map(function(item) {
-        var p = this._resolvePath(path.dirname(file.path), item);
-        if(!p) throw new Error('@require argument '+item+' could not be resolved.');
-        return this.files[p] ? this.files[p] : p;
-    }.bind(this));
-    _processed = _processed || {};
-    _processed[file.path] = true;
-    for(var i in args)
-    {
-        if(typeof args[i] !== 'string' && !_processed[args[i].path])
-            deps.push.apply(deps, this.getDependencies(args[i], _processed));
-        deps.push(args[i]);
-    }
-    deps = _.unique(deps);
-    deps.remove(deps.indexOf(file));
-    return file.data.dependencies = deps;
-};
