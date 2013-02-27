@@ -30,7 +30,10 @@ var includeDependencies = function(file) {
         fs.writeSync(file.fd, prefix, 0, prefix.length, null);
 
         var buffer = fs.readFileSync(absPath);
-        fs.writeSync(file.fd, buffer, 0, buffer.length, null);
+        var str = buffer.toString('utf8');
+        str = str.replace(/\/\/@[^\s]+.*(\n|\r\n)/g, '');
+        buffer.write(str, 0, str.length, 'utf8');
+        fs.writeSync(file.fd, buffer, 0, str.length, null);
 
         var postfix = new Buffer(os.EOL+'/***** Ending '+relPath+' *****/'+os.EOL+os.EOL, 'utf8');
         fs.writeSync(file.fd, postfix, 0, postfix.length, null);
