@@ -61,6 +61,7 @@ var fs = require('fs');
                 var lines = buffer.toString('utf8', 0, bytesRead).split('\n');
                 this.lines[this.lines.length - 1] += lines[0]; // Append the first line to the last line of the cache
                 lines.slice(1).forEach(function(line) {
+                    if(line[line.length-1] == '\r') line = line.substr(0, line.length-1);
                     this.lines.push(line); // Add each line to the cache
                 }.bind(this));
             }

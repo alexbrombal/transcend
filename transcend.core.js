@@ -237,8 +237,9 @@
 
                     if(r !== false && text.indexOf('//@') !== 0)
                     {
-                        text = text.replace(String.fromCharCode(65279), '') + os.EOL;
-                        var buf = new Buffer(text);
+                        if(text.charCodeAt(0) === 65279) // Byte order mark
+                            text = text.substring(1);
+                        var buf = new Buffer(text + os.EOL);
                         fs.writeSync(file.fd, buf, 0, buf.length, null);
                     }
                 },
