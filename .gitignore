@@ -1,5 +1,7 @@
 .DS_Store
 .idea
 .project
+.buildpath
+.settings
 node_modules
 test/transcend/output
