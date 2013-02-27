@@ -4,6 +4,7 @@
 
     var fs = require('fs');
     var path = require('path');
+    var os = require('os');
     var LineReader = require('./linereader.js');
     var _ = require('underscore');
 
@@ -235,7 +236,11 @@
                         r = (_this._runHandler(file, directive, 'eachLine', [text, lineNum]) !== false) && r;
 
                     if(r !== false && text.indexOf('//@') !== 0)
-                        fs.writeSync(file.fd, new Buffer(text+"\n"), 0, text.length + 1, null);
+                    {
+                        text = text.replace(String.fromCharCode(65279), '') + os.EOL;
+                        var buf = new Buffer(text);
+                        fs.writeSync(file.fd, buf, 0, buf.length, null);
+                    }
                 },
 
                 lineReaderComplete = function(file) {

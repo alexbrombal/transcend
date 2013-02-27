@@ -9,7 +9,7 @@
         "url"   : "https://github.com/alexbrombal/transcend"
     },
 
-    "version" : "0.1.5",
+    "version" : "0.1.6",
 
     "main"    : "./transcend.js",
 
