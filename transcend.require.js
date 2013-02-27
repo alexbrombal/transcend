@@ -30,10 +30,11 @@ var includeDependencies = function(file) {
         fs.writeSync(file.fd, prefix, 0, prefix.length, null);
 
         var buffer = fs.readFileSync(absPath);
-        var str = buffer.toString('utf8');
-        str = str.replace(/\/\/@[^\s]+.*(\n|\r\n)/g, '');
-        buffer.write(str, 0, str.length, 'utf8');
-        fs.writeSync(file.fd, buffer, 0, str.length, null);
+        var str = buffer.toString('utf8')
+            .replace(/\/\/@[^\s]+.*(\n|\r\n)/g, '')     // Remove directives, because IE chokes on them
+            .replace(String.fromCharCode(65279), '');   // Remove the utf8 byte order mark
+        buffer.write(str, 0, Buffer.byteLength(str), 'utf8');
+        fs.writeSync(file.fd, buffer, 0, Buffer.byteLength(str), null);
 
         var postfix = new Buffer(os.EOL+'/***** Ending '+relPath+' *****/'+os.EOL+os.EOL, 'utf8');
         fs.writeSync(file.fd, postfix, 0, postfix.length, null);
