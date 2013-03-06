@@ -59,10 +59,16 @@ var fs = require('fs');
             if (bytesRead)
             {
                 var lines = buffer.toString('utf8', 0, bytesRead).split('\n');
-                this.lines[this.lines.length - 1] += lines[0]; // Append the first line to the last line of the cache
+
+                // Trim any stray \r characters from the end of the first line,
+                // then append it to the last line of the cache
+                if(lines[0][lines[0].length-1] == '\r') lines[0] = lines[0].substr(0, lines[0].length-1);
+                this.lines[this.lines.length - 1] += lines[0];
+
+                // For each remaining line, trim \r characters and add to the cache
                 lines.slice(1).forEach(function(line) {
                     if(line[line.length-1] == '\r') line = line.substr(0, line.length-1);
-                    this.lines.push(line); // Add each line to the cache
+                    this.lines.push(line);
                 }.bind(this));
             }
 
