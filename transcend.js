@@ -9,6 +9,7 @@ var path = require('path');
 var Transcend = require('./transcend.core.js');
 require('./transcend.require.js');
 require('./transcend.uglify.js');
+require('./transcend.if.js');
 var vm = require('vm');
 
 var _ = require('underscore');
@@ -22,12 +23,12 @@ var argv = require('optimist')
     })
     .argv;
 
-
 try {
 
     var t = new Transcend({
         dir: argv._[0],
-        output: argv._[1]
+        output: argv._[1],
+        args: argv
     });
 
     var processProject = function() {

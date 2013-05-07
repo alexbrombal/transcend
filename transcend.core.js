@@ -14,6 +14,7 @@
         this.absDir = path.normalize(this.cwd + this.dir + path.sep);
         this.output = options.output || 'build';
         this.absOutput = path.normalize(this.cwd + this.output + path.sep);
+        this.args = options.args || {};
 
         if (!fs.existsSync(this.absDir)) {
             throw new Error(this.absDir + ' does not exist!');
@@ -303,7 +304,7 @@
      * Handlers are a set of callbacks that process directives at various stages in the
      * compilation lifecycle.  These stages are as follows:
      * 'prepare' - Called once for every file that contains at least one of the given directive. Returning false from this function will cause the file to be hidden.
-     * 'process' - called once for every writable file that contains at least one of this directive. The file handle is open and ready for writing.
+     * 'process' - Called once for every writable file that contains at least one of this directive. The file handle is open and ready for writing.
      * 'eachLine' - Called once per line in every file that contains at least one of this directive. Returning false from this will prevent the line from being written to the output file.
      * 'finalize' - Called once for every file that contains at least one of this directive.
      */
