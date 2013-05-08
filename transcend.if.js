@@ -35,7 +35,7 @@ Transcend.setHandler('if', {
                 If.mode = 'if';
                 if(!If.script) {
                     If.script = '';
-                    for(var i in this.args) If.script += 'var '+i+' = '+JSON.stringify(this.args[i])+';';
+                    for(var i in this.config) If.script += 'var '+i+' = '+JSON.stringify(this.config[i])+';';
                 }
                 If.test = eval(If.script + directive.args[0]);
             }

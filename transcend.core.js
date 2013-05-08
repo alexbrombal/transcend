@@ -15,6 +15,7 @@
         this.output = options.output || 'build';
         this.absOutput = path.normalize(this.cwd + this.output + path.sep);
         this.args = options.args || {};
+        this.configFile = this.args.config || 'transcend.json';
 
         if (!fs.existsSync(this.absDir)) {
             throw new Error(this.absDir + ' does not exist!');
@@ -58,6 +59,14 @@
                         return complete.call(this, new Error('Output directory could not be created'));
                 }
             }
+
+            // Pull in the config file
+            try {
+                this.config = require(this.absDir + this.configFile);
+            } catch(e) {
+                this.config = {};
+            }
+            _.extend(this.config, this.args);
 
             this._readDir(this.absDir, function()
             {

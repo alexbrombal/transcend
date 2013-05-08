@@ -2,11 +2,19 @@
 
     //@require /tools/tool1, /tools/tool2, /tools/tool4
 
-    //@if bar.baz == 3
-aaaa
-//@else
-bbbb
+//@if test == "a"
+test == "a"
+//@elseif test == "b"
+test == "b"
+//@elseif test == "c"
+test == "c"
 //@endif
+
+//@if bar.baz == 2
+bar.baz == 2
+//@endif
+
+
 
 var page1 = {
 
