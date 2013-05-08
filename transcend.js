@@ -36,7 +36,7 @@ try {
             if(e)
                 console.log(e);
             else
-                console.log('JavaScript processed successfully.');
+                console.log('JavaScript processed successfully. ['+new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') +']');
             t.reset();
         });
     };

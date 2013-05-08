@@ -15,11 +15,15 @@ var If = {
 
 Transcend.setHandler('if', {
 
+    initialize: function() {
+        If.script = '';
+        for(var i in this.config) If.script += 'var '+i+' = '+JSON.stringify(this.config[i])+';';
+    },
+
     /**
      * @param {Transcend.File} file
      */
     prepare: function(file) {
-
     },
 
     process: function() {
@@ -33,10 +37,6 @@ Transcend.setHandler('if', {
             var directive = _.find(file.directives(directiveText), function(directive) { return directive.lineNum == num; });
             if(directive) {
                 If.mode = 'if';
-                if(!If.script) {
-                    If.script = '';
-                    for(var i in this.config) If.script += 'var '+i+' = '+JSON.stringify(this.config[i])+';';
-                }
                 If.test = eval(If.script + directive.args[0]);
             }
         }

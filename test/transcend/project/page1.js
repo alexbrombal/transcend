@@ -10,11 +10,6 @@ test == "b"
 test == "c"
 //@endif
 
-//@if bar.baz == 2
-bar.baz == 2
-//@endif
-
-
 
 var page1 = {
 

@@ -69,6 +69,11 @@
             }
             _.extend(this.config, this.args);
 
+            for(var i in Transcend._handlers) {
+                if(typeof Transcend._handlers[i].initialize === 'function')
+                    Transcend._handlers[i].initialize.call(this);
+            }
+
             this._readDir(this.absDir, function()
             {
                 for(var directive in Transcend._handlers)
@@ -313,6 +318,7 @@
     /**
      * Handlers are a set of callbacks that process directives at various stages in the
      * compilation lifecycle.  These stages are as follows:
+     * 'initialize' - Called once each time a build is about to occur.
      * 'prepare' - Called once for every file that contains at least one of the given directive. Returning false from this function will cause the file to be hidden.
      * 'process' - Called once for every writable file that contains at least one of this directive. The file handle is open and ready for writing.
      * 'eachLine' - Called once per line in every file that contains at least one of this directive. Returning false from this will prevent the line from being written to the output file.
