@@ -1,10 +1,10 @@
 "use strict";
 
-//@require /tools/tool1, /tools/tool2, /tools/tool4
+    //@require /tools/tool1, /tools/tool2, /tools/tool4
 
-//@if bar.baz == 2
+    //@if bar.baz == 3
 aaaa
-//@elseif foo == 2
+//@else
 bbbb
 //@endif
 

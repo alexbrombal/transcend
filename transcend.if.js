@@ -27,7 +27,7 @@ Transcend.setHandler('if', {
     },
 
     eachLine: function(file, line, num) {
-        var directiveText = (line.match(/^\/\/@(if|else|elseif|endif)\b/) || ['',''])[1];
+        var directiveText = (line.match(/^\s*\/\/@(if|else|elseif|endif)\b/) || ['',''])[1];
         if(directiveText == 'if' || directiveText == 'elseif')
         {
             var directive = _.find(file.directives(directiveText), function(directive) { return directive.lineNum == num; });

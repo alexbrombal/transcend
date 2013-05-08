@@ -236,7 +236,7 @@
                     for(var directive in Transcend._handlers)
                         r = (_this._runHandler(file, directive, 'eachLine', [text, lineNum]) !== false) && r;
 
-                    if(r !== false && text.indexOf('//@') !== 0)
+                    if(r !== false && text.trim().indexOf('//@') !== 0)
                     {
                         if(text.charCodeAt(0) === 65279) // Byte order mark
                             text = text.substring(1);
