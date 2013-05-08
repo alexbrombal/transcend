@@ -62,6 +62,7 @@
 
             // Pull in the config file
             try {
+                delete require.cache[this.absDir + this.configFile];
                 this.config = require(this.absDir + this.configFile);
             } catch(e) {
                 this.config = {};
