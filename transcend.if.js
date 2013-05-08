@@ -36,22 +36,22 @@ Transcend.setHandler('if', {
         {
             var directive = _.find(file.directives(directiveText), function(directive) { return directive.lineNum == num; });
             if(directive) {
-                If.mode = 'if';
-                If.test = eval(If.script + directive.args[0]);
+                file.data.ifMode = 'if';
+                file.data.ifTest = eval(If.script + directive.args[0]);
             }
         }
         else if(directiveText == 'else')
         {
-            If.mode = 'else';
+            file.data.ifMode = 'else';
         }
         else if(directiveText == 'endif')
         {
-            If.mode = '';
+            file.data.ifMode = '';
         }
         else
         {
-            if(If.mode == 'if') return If.test;
-            if(If.mode == 'else') return !If.test;
+            if(file.data.ifMode == 'if') return file.data.ifTest;
+            if(file.data.ifMode == 'else') return !file.data.ifTest;
         }
     },
 
