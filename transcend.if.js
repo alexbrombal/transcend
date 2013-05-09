@@ -3,15 +3,12 @@
 
 var fs = require('fs');
 var path = require('path');
-var os = require('os');
 require('./util.js');
 var _ = require('underscore');
 
 var Transcend = require('./transcend.core.js');
 
-var If = {
-    mode: ''
-};
+var If = {};
 
 Transcend.setHandler('if', {
 
@@ -24,38 +21,32 @@ Transcend.setHandler('if', {
      * @param {Transcend.File} file
      */
     prepare: function(file) {
-    },
-
-    process: function() {
-
-    },
-
-    eachLine: function(file, line, num) {
-        var directiveText = (line.match(/^\s*\/\/@(if|else|elseif|endif)\b/) || ['',''])[1];
-        if(directiveText == 'if' || directiveText == 'elseif')
+        for(var i in file.lines)
         {
-            var directive = _.find(file.directives(directiveText), function(directive) { return directive.lineNum == num; });
-            if(directive) {
-                file.data.ifMode = 'if';
-                file.data.ifTest = eval(If.script + directive.args[0]);
+            var directive = file.directiveLines[i];
+
+            if(directive && (directive.name == 'if' || directive.name == 'elseif'))
+            {
+                try {
+                    file.data.ifTest = !!eval(If.script + directive.args[0]);
+                } catch(e) {
+                    throw new Error('Error evaluating expression: ' + e.message + ' in ' + file.path + ':' + (parseInt(i)+1));
+                }
+            }
+            else if(directive && directive.name == 'else')
+            {
+                file.data.ifTest = !file.data.ifTest;
+            }
+            else if(directive && directive.name == 'endif')
+            {
+                file.data.ifTest = undefined;
+            }
+            else
+            {
+                if(file.data.ifTest === false)
+                    delete file.lines[i];
             }
         }
-        else if(directiveText == 'else')
-        {
-            file.data.ifMode = 'else';
-        }
-        else if(directiveText == 'endif')
-        {
-            file.data.ifMode = '';
-        }
-        else
-        {
-            if(file.data.ifMode == 'if') return file.data.ifTest;
-            if(file.data.ifMode == 'else') return !file.data.ifTest;
-        }
-    },
-
-    finalize: function(file) {
     }
 
 });

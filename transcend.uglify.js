@@ -9,17 +9,6 @@ var Transcend = require('./transcend.core.js');
 
 Transcend.setHandler('uglify', {
 
-    /**
-     * @param {Transcend.File} file
-     */
-    prepare: function(file) {
-    },
-
-    process: function() { },
-
-    eachLine: function(file, line, num) {
-    },
-
     finalize: function(file) {
         /**
          * @type {Transcend.File}

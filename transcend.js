@@ -32,13 +32,13 @@ try {
     });
 
     var processProject = function() {
-        t.process(function(e) {
-            if(e)
-                console.log(e);
-            else
-                console.log('JavaScript processed successfully. ['+new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') +']');
-            t.reset();
-        });
+        try {
+            t.process();
+            console.log('JavaScript processed successfully. ['+new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') +']');
+        } catch(e) {
+            console.log(e);
+        };
+        t.reset();
     };
     var processDelay = _.debounce(processProject, 500, false);
 
