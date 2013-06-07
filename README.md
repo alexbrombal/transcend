@@ -15,7 +15,7 @@ Transcend
    - [//@master](#master)
    - [//@if, //@else, //@elseif, //@endif](#if-else-elseif-endif)
       - [Configuration](#configuration)
-         - [Configuration files](#cofiguration-files)
+         - [Configuration files](#configuration-files)
          - [Configuration parameters](#configuration-parameters)
 
 
