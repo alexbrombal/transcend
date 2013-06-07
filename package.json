@@ -9,12 +9,12 @@
         "url"   : "https://github.com/alexbrombal/transcend"
     },
 
-    "version" : "1.0.0",
+    "version" : "1.0.1",
 
-    "main"    : "./transcend.js",
+    "main"    : "./lib/transcend.js",
 
     "bin"     : {
-        "transcendjs" : "./transcend.js"
+        "transcendjs" : "./lib/transcend.js"
     },
 
     "dependencies": {
