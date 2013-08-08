@@ -1,0 +1,1 @@
+declare("/test2.js",function(){function t(){doStuff2()}t()});
