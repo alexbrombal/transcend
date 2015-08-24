@@ -1,2 +1,2 @@
-//@require sub2
+//@require ./sub2.js
 sub4

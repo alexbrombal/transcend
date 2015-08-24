@@ -1,0 +1,3 @@
+//@parent /master
+
+page1

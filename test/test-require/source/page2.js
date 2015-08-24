@@ -1,2 +1,2 @@
-//@require sub/_sub4.js
+//@require sub/sub4.js
 page2

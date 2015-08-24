@@ -1,2 +1,2 @@
-//@require sub2
+//@require ../sub/sub2
 sub3
