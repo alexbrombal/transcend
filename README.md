@@ -146,10 +146,10 @@ Specifies a dependency of one JavaScript file on another. The referenced file wi
 
 Usage:
 
-    //@require singleFile.js						(in same directory as current file)
-	//@require multipleFiles.js, multipleFiles.js	
-	//@require ../relative/filename.js				(relative to current file)
-	//@require /absolute/filename.js				(relative to input folder root)
+    //@require file.js                                          (in same directory as current file)
+    //@require file1.js, file2.js	
+    //@require ../relative/filename.js                          (relative to current file)
+    //@require /absolute/filename.js                            (relative to input folder root)
 
 Notes: 
 - `.js` extensions are optional. Underscore (_) prefix is also optional if the file has one.
