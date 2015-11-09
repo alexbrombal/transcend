@@ -232,14 +232,14 @@ For example, imagine you had three JavaScript files, **page1.js**, **page2.js**,
 	
 **page1.js:**
 
-	//@parent master.js
+	//@parent global.js
 	//@require jquery.js
 	
 	... Page 1 ...
 	
 **page2.js:**
 
-	//@parent master.js
+	//@parent global.js
 	//@require jquery.js
 	//@require widget.js
 
@@ -249,7 +249,7 @@ For example, imagine you had three JavaScript files, **page1.js**, **page2.js**,
 	
 Both `page1.js` and `page2.js` include jQuery as a dependency. Because `global.js` is the parent of both files, `global.js` will include jQuery, instead of `page1.js` and `page2.js` both containing a copy.  `page2.js` also required `widget.js`, but since it was not common to both files, it will only be included in the output of `page2.js`.
 
-Each of your html pages would include one of the *page* files (which would only include code pertinent to those pages), as well as master.js (which will include code common to all pages).
+Each of your html pages would include one of the *page* files (which would only include code pertinent to those pages), as well as global.js (which will include code common to all pages).
 
 
 --
@@ -284,7 +284,7 @@ my-file.js
 
 In the above code, the first segment will only be output if the configuration variable named "environment" is equal to "local". Otherwise, the second segment will be output.
 
-The content after the `//@if` or `//@elseif` directive can be any valid JavaScript expression. Any properties specified in the configuration file will be available to these expressions. Top-level properties becomes local variables; any nested objects can be accessed just like you would in JavaScript:
+The expression after the `//@if` or `//@elseif` directive can be any valid JavaScript expression. Any properties specified in the configuration file will be available to these expressions. Top-level properties becomes local variables; any nested objects can be accessed just like you would in JavaScript:
 
 	//@if environment == "local"
 	//@elseif myValues.foo == "bar"
